@@ -50,11 +50,9 @@ public class PrototypeDemo {
     public static void main(String[] args) {
         // Create prototypes
         Circle circlePrototype = new Circle(10, 20, 30);
-        Rectangle rectanglePrototype = new Rectangle(50, 60, 40, 20);
 
         // Clone prototypes to create new shapes
         Circle circle1 = circlePrototype.clone();
-        Rectangle rectangle1 = rectanglePrototype.clone();
 
         // Modify field values of cloned objects
         circle1.setX(50);
