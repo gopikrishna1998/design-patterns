@@ -1,11 +1,11 @@
-// Prototype Interface
-interface Shape {
-    Shape clone();
+// Prototype Interface (Using Generics)
+interface Shape<T extends Shape<T>> {
+    T clone();
     void draw();
 }
 
-// Concrete Prototype
-class Circle implements Shape, Cloneable {
+// Concrete Prototypes
+class Circle implements Shape<Circle>, Cloneable {
     private int x;
     private int y;
     private int radius;
@@ -16,40 +16,51 @@ class Circle implements Shape, Cloneable {
         this.radius = radius;
     }
 
-    public Circle(Circle source) { // Copy Constructor
-        this.x = source.x;
-        this.y = source.y;
-        this.radius = source.radius;
-    }
-
     @Override
-    public Shape clone() {
-        return new Circle(this); // Using copy constructor
+    public Circle clone() {
+        try {
+            return (Circle) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null; // Or throw a RuntimeException
+        }
     }
 
     @Override
     public void draw() {
-        System.out.println("Drawing circle at (" + x + ", " + y + ") with radius " + radius);
+        System.out.println("Drawing Circle at (" + x + ", " + y + ") with radius " + radius);
+    }
+
+    // Setters for changing field values
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
     }
 }
 
 // Client Code
 public class PrototypeDemo {
     public static void main(String[] args) {
-        Circle originalCircle = new Circle(10, 10, 5);
-        originalCircle.draw();
+        // Create prototypes
+        Circle circlePrototype = new Circle(10, 20, 30);
+        Rectangle rectanglePrototype = new Rectangle(50, 60, 40, 20);
 
-        Shape clonedCircle = originalCircle.clone();
-        clonedCircle.draw();
+        // Clone prototypes to create new shapes
+        Circle circle1 = circlePrototype.clone();
+        Rectangle rectangle1 = rectanglePrototype.clone();
 
-        // Modify the cloned circle
-        Circle circle = (Circle) clonedCircle; // cast to access Circle fields
-        circle.x = 20;
-        circle.y = 20;
-        circle.radius = 8;
+        // Modify field values of cloned objects
+        circle1.setX(50);
+        circle1.setRadius(15);
 
-        clonedCircle.draw(); // cloned circle has the new values
-
-        originalCircle.draw(); // original circle is unchanged.
+        // Draw the modified cloned shapes
+        circle1.draw();
     }
 }
