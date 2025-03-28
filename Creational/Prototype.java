@@ -1,11 +1,11 @@
 // Prototype Interface
-interface Shape extends Cloneable {
+interface Shape {
     Shape clone();
     void draw();
 }
 
 // Concrete Prototype
-class Circle implements Shape {
+class Circle implements Shape, Cloneable {
     private int x;
     private int y;
     private int radius;
