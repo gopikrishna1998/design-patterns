@@ -36,10 +36,6 @@ class Directory extends FileSystemComponent {
         children.add(component);
     }
 
-    public void remove(FileSystemComponent component) {
-        children.remove(component);
-    }
-
     @Override
     public void display() {
         System.out.println("Directory: " + name);
