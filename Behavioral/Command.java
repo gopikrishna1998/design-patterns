@@ -21,18 +21,12 @@ class Light {
     }
 }
 
-class LightOnCommand implements Command {
-    private Light light;
-    private boolean previousState;
+abstract class LightCommandBase implements Command {
+    protected Light light;
+    protected boolean previousState;
 
-    public LightOnCommand(Light light) {
+    public LightCommandBase(Light light) {
         this.light = light;
-    }
-
-    @Override
-    public void execute() {
-        previousState = light.isOn(); // Store previous state
-        light.turnOn();
     }
 
     @Override
@@ -45,27 +39,29 @@ class LightOnCommand implements Command {
     }
 }
 
-class LightOffCommand implements Command {
-    private Light light;
-    private boolean previousState;
+class LightOnCommand extends LightCommandBase {
+
+    public LightOnCommand(Light light) {
+        super(light);
+    }
+
+    @Override
+    public void execute() {
+        previousState = light.isOn(); // Store previous state
+        light.turnOn();
+    }
+}
+
+class LightOffCommand extends LightCommandBase {
 
     public LightOffCommand(Light light) {
-        this.light = light;
+        super(light);
     }
 
     @Override
     public void execute() {
         previousState = light.isOn(); // Store previous state
         light.turnOff();
-    }
-
-    @Override
-    public void undo() {
-        if (previousState) {
-            light.turnOn();
-        } else {
-            light.turnOff();
-        }
     }
 }
 
