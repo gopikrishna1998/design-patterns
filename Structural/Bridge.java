@@ -3,10 +3,21 @@ interface Device {
     void turnOn();
     void turnOff();
     void setChannel(int channel);
+    void setVolume(int volume);
+}
+
+abstract class AbstractDevice implements Device {
+    protected int volume = 50;
+
+    @Override
+    public void setVolume(int volume) {
+        this.volume = volume;
+        System.out.println(getClass().getSimpleName() + ": Volume set to " + volume);
+    }
 }
 
 // Concrete Implementors (TV, Radio)
-class TV implements Device {
+class TV extends AbstractDevice {
     @Override
     public void turnOn() {
         System.out.println("TV: Turning on");
@@ -23,7 +34,7 @@ class TV implements Device {
     }
 }
 
-class Radio implements Device {
+class Radio extends AbstractDevice {
     @Override
     public void turnOn() {
         System.out.println("Radio: Turning on");
@@ -82,6 +93,7 @@ class AdvancedRemote extends BasicRemote {
 
     public void mute() {
         System.out.println("Remote: Muting device");
+        device.setVolume(0);
     }
 }
 
