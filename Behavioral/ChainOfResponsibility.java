@@ -29,7 +29,7 @@ class Level1Support extends SupportHandler {
 
     @Override
     protected void process(String issueType) {
-        System.out.println("✅ Level 1 handled the issue: " + issueType);
+        System.out.println("Level 1 handled the issue: " + issueType);
     }
 }
 
@@ -41,7 +41,7 @@ class Level2Support extends SupportHandler {
 
     @Override
     protected void process(String issueType) {
-        System.out.println("✅ Level 2 handled the issue: " + issueType);
+        System.out.println("Level 2 handled the issue: " + issueType);
     }
 }
 
@@ -53,7 +53,7 @@ class Level3Support extends SupportHandler {
 
     @Override
     protected void process(String issueType) {
-        System.out.println("✅ Level 3 handled the issue: " + issueType);
+        System.out.println("Level 3 handled the issue: " + issueType);
     }
 }
 
