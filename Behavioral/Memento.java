@@ -1,5 +1,5 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Deque;
+import java.util.LinkedList;
 
 // Memento
 class EditorMemento {
@@ -14,49 +14,52 @@ class EditorMemento {
     }
 }
 
-// Originator with internal history
+// Originator
 class TextEditor {
     private String text = "";
 
-    // Caretaker (internal)
+    // Internal caretaker for undo history
     private static class EditorHistory {
-        private final List<EditorMemento> history = new ArrayList<>();
+        private final Deque<EditorMemento> history = new LinkedList<>();
 
         public void save(EditorMemento memento) {
-            history.add(memento);
+            history.push(memento);
         }
 
         public EditorMemento undo() {
             if (history.size() > 1) {
-                history.remove(history.size() - 1);
-                return history.get(history.size() - 1);
+                history.pop(); // remove current state
+                return history.peek(); // return previous state
             } else if (history.size() == 1) {
-                history.remove(0);
+                history.pop();
                 return new EditorMemento("");
             }
             return null;
         }
 
-        public boolean hasHistory() {
-            return !history.isEmpty();
+        public boolean hasUndo() {
+            return history.size() > 1;
         }
     }
 
     private final EditorHistory history = new EditorHistory();
 
     public TextEditor() {
-        saveState(); // Save initial empty state
+        saveState(); // Save the initial empty state
     }
 
     public void type(String words) {
-        text += " " + words;
+        if (!text.isEmpty()) text += " ";
+        text += words;
         saveState();
     }
 
     public void undo() {
-        EditorMemento previousState = history.undo();
-        if (previousState != null) {
+        if (history.hasUndo()) {
+            EditorMemento previousState = history.undo();
             text = previousState.getText();
+        } else {
+            System.out.println("Nothing to undo.");
         }
     }
 
@@ -70,22 +73,21 @@ class TextEditor {
 }
 
 // Client
-public class MementoDemo {
+public class MementoUndoDemo {
     public static void main(String[] args) {
         TextEditor editor = new TextEditor();
 
         editor.type("Hello");
         editor.type("World");
-
         System.out.println("Current Text: " + editor.getText());
 
         editor.undo();
-        System.out.println("After 1st undo: " + editor.getText());
+        System.out.println("After 1st Undo: " + editor.getText());
 
         editor.undo();
-        System.out.println("After 2nd undo: " + editor.getText());
+        System.out.println("After 2nd Undo: " + editor.getText());
 
-        editor.undo(); // nothing to undo now
-        System.out.println("After 3rd undo (no effect): " + editor.getText());
+        editor.undo(); // Nothing to undo
+        System.out.println("After 3rd Undo (no effect): " + editor.getText());
     }
 }
