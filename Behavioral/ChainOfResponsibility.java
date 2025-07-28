@@ -1,81 +1,78 @@
 // Handler
-abstract class Logger {
-    protected Logger nextLogger;
-    protected int level;
+abstract class SupportHandler {
+    protected SupportHandler nextHandler;
 
-    public Logger(int level) {
-        this.level = level;
+    public void setNextHandler(SupportHandler nextHandler) {
+        this.nextHandler = nextHandler;
     }
 
-    public void setNextLogger(Logger nextLogger) {
-        this.nextLogger = nextLogger;
-    }
-
-    public void logMessage(int level, String message) {
-        if (this.level <= level) {
-            write(message);
-            return;
-        }
-        if (nextLogger != null) {
-            nextLogger.logMessage(level, message);
+    public void handleRequest(String issueType) {
+        if (canHandle(issueType)) {
+            process(issueType);
+        } else if (nextHandler != null) {
+            nextHandler.handleRequest(issueType);
+        } else {
+            System.out.println("Issue \"" + issueType + "\" could not be handled.");
         }
     }
 
-    abstract protected void write(String message);
-
-    public static final int DEBUG = 1;
-    public static final int INFO = 2;
-    public static final int ERROR = 3;
+    protected abstract boolean canHandle(String issueType);
+    protected abstract void process(String issueType);
 }
 
 // Concrete Handlers
-class DebugLogger extends Logger {
-    public DebugLogger(int level) {
-        super(level);
+class Level1Support extends SupportHandler {
+    @Override
+    protected boolean canHandle(String issueType) {
+        return issueType.equalsIgnoreCase("faq");
     }
 
     @Override
-    protected void write(String message) {
-        System.out.println("Debug Logger: " + message);
+    protected void process(String issueType) {
+        System.out.println("✅ Level 1 handled the issue: " + issueType);
     }
 }
 
-class InfoLogger extends Logger {
-    public InfoLogger(int level) {
-        super(level);
+class Level2Support extends SupportHandler {
+    @Override
+    protected boolean canHandle(String issueType) {
+        return issueType.equalsIgnoreCase("configuration");
     }
 
     @Override
-    protected void write(String message) {
-        System.out.println("Info Logger: " + message);
+    protected void process(String issueType) {
+        System.out.println("✅ Level 2 handled the issue: " + issueType);
     }
 }
 
-class ErrorLogger extends Logger {
-    public ErrorLogger(int level) {
-        super(level);
+class Level3Support extends SupportHandler {
+    @Override
+    protected boolean canHandle(String issueType) {
+        return issueType.equalsIgnoreCase("critical");
     }
 
     @Override
-    protected void write(String message) {
-        System.out.println("Error Logger: " + message);
+    protected void process(String issueType) {
+        System.out.println("✅ Level 3 handled the issue: " + issueType);
     }
 }
 
 // Client Code
-public class ChainOfResponsibilityDemo {
+public class SupportChainDemo {
     public static void main(String[] args) {
-        Logger debugLogger = new DebugLogger(Logger.DEBUG);
-        Logger infoLogger = new InfoLogger(Logger.INFO);
-        Logger errorLogger = new ErrorLogger(Logger.ERROR);
+        // Create handlers
+        SupportHandler level1 = new Level1Support();
+        SupportHandler level2 = new Level2Support();
+        SupportHandler level3 = new Level3Support();
 
-        debugLogger.setNextLogger(infoLogger);
-        infoLogger.setNextLogger(errorLogger);
+        // Set up the chain
+        level1.setNextHandler(level2);
+        level2.setNextHandler(level3);
 
-        Logger loggerChain = debugLogger; // Start the chain
-
-        loggerChain.logMessage(Logger.DEBUG, "This is a debug message.");
-        loggerChain.logMessage(Logger.INFO, "This is an info message.");
-        loggerChain.logMessage(Logger.ERROR, "This is an error message.");
+        // Send requests through the chain
+        level1.handleRequest("faq");           // Handled by Level 1
+        level1.handleRequest("configuration"); // Handled by Level 2
+        level1.handleRequest("critical");      // Handled by Level 3
+        level1.handleRequest("billing");       // Unhandled
     }
 }
